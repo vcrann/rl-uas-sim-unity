@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Multirotor : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -17,8 +16,8 @@ public class Multirotor : MonoBehaviour
     private float _inertiaXx = 4.856e-3f;
     private float _inertiaYy = 4.856e-3f;
     private float _inertiaZz = 8.801e-3f;
-    private float _numberOfRotors = 4f;
-    private Rotor[] _rotors;
+    private int _numberOfRotors = 4;
+    Rotor[] _rotors = new Rotor[4];
     private float[] _armLengths = new float[4] { 0.1f, 0.1f, 0.1f, 0.1f };
     private float[] _armAngles = new float[4] { Mathf.PI / 4.0f, 3.0f * Mathf.PI / 4.0f, 5.0f * Mathf.PI / 4.0f, 7.0f * Mathf.PI / 4.0f };
 
@@ -26,16 +25,16 @@ public class Multirotor : MonoBehaviour
     void Start()
     {
         Physics.autoSimulation = false;
-        for (int i = 0; i <= 4; i++)
+        for (int i = 0; i <= 3; i++)
         {
-            _rotors[i] = new Rotor();
+            _rotors[i] = new Rotor(true, 0.05f, 3.357e-5f, 0.0000001984f, 0.000000003733f, 0.098f, 6432f, 1779f);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //transform.position = new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z + 0.01f);
+        transform.position = new Vector3(_positionE.y, _positionE.z, _positionE.x);
         //Physics.Simulate(Time.fixedDeltaTime);
     }
 
@@ -52,28 +51,20 @@ public class Multirotor : MonoBehaviour
             _torqueB += _rotors[i].GetGyroscopicTorque(_angularVelocityB);
         }
 
-        // Calculate the acceleration
+        // Linear
         _accelerationB = _thrustB / _mass;
         _velocityB += _accelerationB * dT;
         _positionE += BodyToEarth(_velocityB, _attitudeE) * dT;
 
-        // Calculate the angular acceleration
-        //_angularAccelerationB = (-_angular_velocity_b.cross(Eigen::Vector3d(_inertia_xx, _inertia_yy, _inertia_zz) * _angular_velocity_b) + _torque_b).array() / Eigen::Vector3d(_inertia_xx, _inertia_yy, _inertia_zz).array()
+        // Angular
         Vector3 _inertia = new Vector3(_inertiaXx, _inertiaYy, _inertiaZz);
         Vector3 _unscaledAngularAccelerationB = (-Vector3.Cross(_angularVelocityB, Vector3.Scale(_inertia, _angularVelocityB)) + _torqueB);
         _angularAccelerationB.x = _unscaledAngularAccelerationB.x / _inertia.x;
         _angularAccelerationB.y = _unscaledAngularAccelerationB.y / _inertia.y;
         _angularAccelerationB.z = _unscaledAngularAccelerationB.z / _inertia.z;
 
-        // Calculate the velocity
-        _velocityB += _accelerationB * dT;
         _angularVelocityB += _angularAccelerationB * dT;
-
-        // Calculate the position
-        _positionE += BodyToEarth(_velocityB, _attitudeE) * dT;
-
-        // Calculate the attitude
-        _attitudeE += BodyToEarth(_angularVelocityB, _attitudeE) * dT;
+        _attitudeE += Vector3.Scale_angularVelocityB * dT;
     }
 
 

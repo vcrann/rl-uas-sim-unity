@@ -1,32 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Rotor : MonoBehaviour
+public class Rotor
 {
     private bool _isClockwise;
-    private float _throttle;
-    private float _desiredRotorSpeed;
-    private float _rotorSpeed;
+    private float _throttle = 0.0f;
+    private float _desiredRotorSpeed = 0.0f;
+    private float _rotorSpeed = 0.0f;
     private float _propellerDiameter;
     private float _rotorMomentOfInertia;
     private float _rotorThrustCoefficient;
     private float _rotorTorqueCoefficient;
-    private float _rotorThrust;
-    private float _rotorTorque;
+    private float _rotorThrust = 0.0f;
+    private float _rotorTorque = 0.0f;
     private float _timeConstant;
     private float _rotorConstant;
     private float _omegaB;
-    // Start is called before the first frame update
-    void Start()
+
+    public Rotor(bool isClockwise, float propellerDiameter, float rotorMomentOfInertia, float rotorThrustCoefficient, float rotorTorqueCoefficient, float timeConstant, float rotorConstant, float omegaB)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        _isClockwise = isClockwise;
+        _propellerDiameter = propellerDiameter;
+        _rotorMomentOfInertia = rotorMomentOfInertia;
+        _rotorThrustCoefficient = rotorThrustCoefficient;
+        _rotorTorqueCoefficient = rotorTorqueCoefficient;
+        _timeConstant = timeConstant;
+        _rotorConstant = rotorConstant;
+        _omegaB = omegaB;
     }
 
     public void Step(float dT)
