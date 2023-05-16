@@ -60,10 +60,10 @@ public class Multirotor : MonoBehaviour
         // Calculate the angular acceleration
         //_angularAccelerationB = (-_angular_velocity_b.cross(Eigen::Vector3d(_inertia_xx, _inertia_yy, _inertia_zz) * _angular_velocity_b) + _torque_b).array() / Eigen::Vector3d(_inertia_xx, _inertia_yy, _inertia_zz).array()
         Vector3 _inertia = new Vector3(_inertiaXx, _inertiaYy, _inertiaZz);
-        Vector3 _unscaledAngularAccelerationB = (-Vector3.Cross(_angularVelocityB, Vector3.Scale(_inertia, _angularVelocityB)) + _torqueb) / _inertia;
-        _angular_acceleration_b.x /= _inertia.x;
-        _angular_acceleration_b.y /= _inertia.y;
-        _angular_acceleration_b.z /= _inertia.z;
+        Vector3 _unscaledAngularAccelerationB = (-Vector3.Cross(_angularVelocityB, Vector3.Scale(_inertia, _angularVelocityB)) + _torqueB);
+        _angularAccelerationB.x = _unscaledAngularAccelerationB.x / _inertia.x;
+        _angularAccelerationB.y = _unscaledAngularAccelerationB.y / _inertia.y;
+        _angularAccelerationB.z = _unscaledAngularAccelerationB.z / _inertia.z;
 
         // Calculate the velocity
         _velocityB += _accelerationB * dT;
