@@ -4,18 +4,18 @@ using UnityEngine;
 public class Rotor
 {
     private bool _isClockwise;
-    private float _throttle = 0.0f;
-    private float _desiredRotorSpeed = 0.0f;
-    private float _rotorSpeed = 0.0f;
-    private float _propellerDiameter;
-    private float _rotorMomentOfInertia;
-    private float _rotorThrustCoefficient;
-    private float _rotorTorqueCoefficient;
-    private float _rotorThrust = 0.0f;
-    private float _rotorTorque = 0.0f;
-    private float _timeConstant;
-    private float _rotorConstant;
-    private float _omegaB;
+    private float _throttle = 0.0f; // between 0 and 1
+    private float _desiredRotorSpeed = 0.0f; // [RPM]
+    private float _rotorSpeed = 0.0f; // [RPM]
+    private float _propellerDiameter; // [m]
+    private float _rotorMomentOfInertia; // [kg*m^2]
+    private float _rotorThrustCoefficient; // [N/RPM^2]
+    private float _rotorTorqueCoefficient; // [Nm/RPM^2]
+    private float _rotorThrust = 0.0f; // [N]
+    private float _rotorTorque = 0.0f; // [N*m]
+    private float _timeConstant; // [s]
+    private float _rotorConstant; // [RPM] slope of linear relationship between throttle command and motor speed
+    private float _omegaB; // [RPM] constant term of linear relationship between throttle command and motor speed
 
     public Rotor(bool isClockwise, float propellerDiameter, float rotorMomentOfInertia, float rotorThrustCoefficient, float rotorTorqueCoefficient, float timeConstant, float rotorConstant, float omegaB)
     {
