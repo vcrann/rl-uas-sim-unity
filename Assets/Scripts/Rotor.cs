@@ -4,20 +4,20 @@ using UnityEngine;
 public class Rotor
 {
     private bool _isClockwise;
-    private float _throttle = 0.0f; // between 0 and 1
-    private float _desiredRotorSpeed = 0.0f; // [RPM]
-    private float _rotorSpeed = 0.0f; // [RPM]
-    private float _propellerDiameter; // [m]
-    private float _rotorMomentOfInertia; // [kg*m^2]
-    private float _rotorThrustCoefficient; // [N/RPM^2]
-    private float _rotorTorqueCoefficient; // [Nm/RPM^2]
-    private float _rotorThrust = 0.0f; // [N]
-    private float _rotorTorque = 0.0f; // [N*m]
-    private float _timeConstant; // [s]
-    private float _rotorConstant; // [RPM] slope of linear relationship between throttle command and motor speed
-    private float _omegaB; // [RPM] constant term of linear relationship between throttle command and motor speed
+    private double _throttle = 0.0; // between 0 and 1
+    private double _desiredRotorSpeed = 0.0; // [RPM]
+    private double _rotorSpeed = 0.0; // [RPM]
+    private double _propellerDiameter; // [m]
+    private double _rotorMomentOfInertia; // [kg*m^2]
+    private double _rotorThrustCoefficient; // [N/RPM^2]
+    private double _rotorTorqueCoefficient; // [Nm/RPM^2]
+    private double _rotorThrust = 0.0; // [N]
+    private double _rotorTorque = 0.0; // [N*m]
+    private double _timeConstant; // [s]
+    private double _rotorConstant; // [RPM] slope of linear relationship between throttle command and motor speed
+    private double _omegaB; // [RPM] constant term of linear relationship between throttle command and motor speed
 
-    public Rotor(bool isClockwise, float propellerDiameter, float rotorMomentOfInertia, float rotorThrustCoefficient, float rotorTorqueCoefficient, float timeConstant, float rotorConstant, float omegaB)
+    public Rotor(bool isClockwise, double propellerDiameter, double rotorMomentOfInertia, double rotorThrustCoefficient, double rotorTorqueCoefficient, double timeConstant, double rotorConstant, double omegaB)
     {
         _isClockwise = isClockwise;
         _propellerDiameter = propellerDiameter;
@@ -29,7 +29,7 @@ public class Rotor
         _omegaB = omegaB;
     }
 
-    public void Step(float dT)
+    public void Step(double dT)
     {
         _rotorSpeed = dT * ((_desiredRotorSpeed - _rotorSpeed) / _timeConstant) + _rotorSpeed;
         _rotorThrust = _rotorThrustCoefficient * _rotorSpeed * _rotorSpeed;
@@ -40,32 +40,32 @@ public class Rotor
         }
     }
 
-    public void SetThrottle(float throttle)
+    public void SetThrottle(double throttle)
     {
         _throttle = throttle;
         _desiredRotorSpeed = _rotorConstant * _throttle + _omegaB;
     }
 
-    public float GetThrust()
+    public double GetThrust()
     {
         return _rotorThrust;
     }
 
-    public float GetTorque()
+    public double GetTorque()
     {
         return _rotorTorque;
     }
 
-    public Vector3 GetGyroscopicTorque(Vector3 angularVelocityB)
+    public Vector3d GetGyroscopicTorque(Vector3d angularVelocityB)
     {
-        Vector3 gyroscopicTorque = new Vector3(0, 0, 0);
+        Vector3d gyroscopicTorque = new Vector3d(0, 0, 0);
         if (_isClockwise)
         {
-            gyroscopicTorque = new Vector3(-_rotorMomentOfInertia * angularVelocityB.y * (_rotorSpeed / 60f * 2f * Mathf.PI), _rotorMomentOfInertia * angularVelocityB.x * (_rotorSpeed / 60f * 2f * Mathf.PI), 0.0f);
+            gyroscopicTorque = new Vector3d(-_rotorMomentOfInertia * angularVelocityB.y * (_rotorSpeed / 60 * 2 * Mathd.PI), _rotorMomentOfInertia * angularVelocityB.x * (_rotorSpeed / 60 * 2 * Mathd.PI), 0.0);
         }
         else
         {
-            gyroscopicTorque = new Vector3(_rotorMomentOfInertia * angularVelocityB.y * (_rotorSpeed / 60f * 2f * Mathf.PI), -_rotorMomentOfInertia * angularVelocityB.x * (_rotorSpeed / 60f * 2f * Mathf.PI), 0.0f);
+            gyroscopicTorque = new Vector3d(_rotorMomentOfInertia * angularVelocityB.y * (_rotorSpeed / 60 * 2 * Mathd.PI), -_rotorMomentOfInertia * angularVelocityB.x * (_rotorSpeed / 60 * 2 * Mathd.PI), 0.0);
         }
         return gyroscopicTorque;
     }
