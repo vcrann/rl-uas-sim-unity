@@ -11,15 +11,20 @@ public class PIDController
     private double _error = 0.0;
     private double _previousError = 0.0;
     private double _integral = 0.0;
+    private double _lowerLimit;
+    private double _upperLimit;
 
-    public PIDController(double dT, double setpoint, double kP, double kI, double kD)
+    public PIDController(double dT, double setpoint, double kP, double kI, double kD, double lowerLimit, double upperLimit)
     {
         _dT = dT;
         _setpoint = setpoint;
         _kP = kP;
         _kI = kI;
         _kD = kD;
+        _upperLimit = upperLimit;
+        _lowerLimit = lowerLimit;
     }
+
 
     public double Calculate(double currentValue)
     {
@@ -36,11 +41,11 @@ public class PIDController
         double dOutput = _kD * ((_error - _previousError) / _dT);
 
         double output = pOutput + iOutput + dOutput;
-        if (output > 1.0f)
+        if (output > _upperLimit)
         {
             output = 1.0f;
         }
-        else if (output < 0.0f)
+        else if (output < _lowerLimit)
         {
             output = 0.0f;
         }

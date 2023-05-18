@@ -42,6 +42,18 @@ public class Rotor
 
     public void SetThrottle(double throttle)
     {
+        if (throttle < 1.0)
+        {
+            _throttle = throttle;
+        }
+        else if (throttle < 0.0)
+        {
+            _throttle = 0.0;
+        }
+        else
+        {
+            _throttle = 1.0;
+        }
         _throttle = throttle;
         _desiredRotorSpeed = _rotorConstant * _throttle + _omegaB;
     }

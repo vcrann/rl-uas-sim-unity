@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Timers;
 using UnityEngine;
-public class Multirotor : MonoBehaviour
+public class MultirotorDynamics
 {
     // Start is called before the first frame update
     private Vector3d _positionE = new Vector3d(0, 0, 0);
     private Vector3d _velocityB = new Vector3d(0, 0, 0);
     private Vector3d _accelerationB = new Vector3d(0, 0, 0);
-    private Vector3d _attitudeE = new Vector3d(0, 0, 0);
+    private Vector3d _attitudeE = new Vector3d(0.1, 0.1, 0.5);
     private Vector3d _angularVelocityB = new Vector3d(0, 0, 0);
     private Vector3d _angularAccelerationB = new Vector3d(0, 0, 0);
     private Vector3d _thrustB = new Vector3d(0, 0, 0);
@@ -24,44 +24,67 @@ public class Multirotor : MonoBehaviour
 
     private Vector3d _gravityE = new Vector3d(0, 0, 9.81);
     private double _dT = 0.001;
-    //private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.01, -0.1);
+    private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.05, -0.2, 0.0, 1.0);
+    private PIDController _rollController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
+    private PIDController _pitchController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
+    private PIDController _yawController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
 
-    private MultirotorDynamics _multirotorDynamics = new MultirotorDynamics();
-    private Thread modelThread;
+    private readonly object _stateLock = new object();
 
 
-    void Start()
-    {
-        Physics.autoSimulation = false;
-        // Time.fixedDeltaTime = (float)_dT;
-        // _rotors[0] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-        // _rotors[1] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-        // _rotors[2] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-        // _rotors[3] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-
-        modelThread = new Thread(_multirotorDynamics.RunModel);
-        modelThread.Start();
-    }
+    // void Start()
+    // {
+    //     Physics.autoSimulation = false;
+    //     _rotors[0] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+    //     _rotors[1] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+    //     _rotors[2] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+    //     _rotors[3] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+    // }
 
     // Update is called once per frame
-    void Update()
-    {
-        transform.position = new Vector3((float)_multirotorDynamics.getPosition().y, -(float)_multirotorDynamics.getPosition().z, (float)_multirotorDynamics.getPosition().x);
-        transform.eulerAngles = new Vector3(-(float)_multirotorDynamics.getAttitude().y * 180.0f / Mathf.PI, (float)_multirotorDynamics.getAttitude().z * 180.0f / Mathf.PI, -(float)_multirotorDynamics.getAttitude().x * 180.0f / Mathf.PI);
 
-        //transform.position = new Vector3((float)_positionE.y, -(float)_positionE.z, (float)_positionE.x);
-        //transform.eulerAngles = new Vector3(-(float)_attitudeE.y * 180.0f / Mathf.PI, (float)_attitudeE.z * 180.0f / Mathf.PI, -(float)_attitudeE.x * 180.0f / Mathf.PI);
+    // void FixedUpdate()
+    // {
+    //     Step(_dT);
+    //     double altitudeThrottleModifier = _altitudeController.Calculate(_positionE.z);
+    //     _rotors[0].SetThrottle(altitudeThrottleModifier);
+    //     _rotors[1].SetThrottle(altitudeThrottleModifier);
+    //     _rotors[2].SetThrottle(altitudeThrottleModifier);
+    //     _rotors[3].SetThrottle(altitudeThrottleModifier);
+    // }
+
+    public void RunModel()
+    {
+        // Temp code to test the model
+        _rotors[0] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[1] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[2] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[3] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+
+        // Create a timer with a 1ms interval (1000Hz)
+        Timer modelTimer = new System.Timers.Timer(1);
+        // Hook up the Elapsed event for the timer
+        modelTimer.Elapsed += OnTimedEvent;
+        modelTimer.AutoReset = true;
+        modelTimer.Enabled = true;
     }
 
-    void FixedUpdate()
+    private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
     {
-        // Step(_dT);
+
+        lock (_stateLock)
+        {
+            Step(_dT);
+        }
         // double altitudeThrottleModifier = _altitudeController.Calculate(_positionE.z);
         // _rotors[0].SetThrottle(altitudeThrottleModifier);
         // _rotors[1].SetThrottle(altitudeThrottleModifier);
         // _rotors[2].SetThrottle(altitudeThrottleModifier);
         // _rotors[3].SetThrottle(altitudeThrottleModifier);
+        QuadMixer(_altitudeController.Calculate(_positionE.z), _rollController.Calculate(_attitudeE.x), _pitchController.Calculate(_attitudeE.y), _yawController.Calculate(_attitudeE.z));
     }
+
+
 
     void Step(double dT)
     {
@@ -90,6 +113,14 @@ public class Multirotor : MonoBehaviour
 
         _angularVelocityB += _angularAccelerationB * dT;
         _attitudeE += _angularVelocityB * dT;
+    }
+
+    void QuadMixer(double altitudeThrottleModifier, double rollModifier, double pitchModifier, double yawModifier) // only works for Quad X but its a start
+    {
+        _rotors[0].SetThrottle(altitudeThrottleModifier - rollModifier * altitudeThrottleModifier + pitchModifier * altitudeThrottleModifier - yawModifier * altitudeThrottleModifier);
+        _rotors[1].SetThrottle(altitudeThrottleModifier - rollModifier * altitudeThrottleModifier - pitchModifier * altitudeThrottleModifier + yawModifier * altitudeThrottleModifier);
+        _rotors[2].SetThrottle(altitudeThrottleModifier + rollModifier * altitudeThrottleModifier - pitchModifier * altitudeThrottleModifier - yawModifier * altitudeThrottleModifier);
+        _rotors[3].SetThrottle(altitudeThrottleModifier + rollModifier * altitudeThrottleModifier + pitchModifier * altitudeThrottleModifier + yawModifier * altitudeThrottleModifier);
     }
 
     Vector3d BodyToEarth(Vector3d vectorB, Vector3d rotationB)
@@ -147,5 +178,15 @@ public class Multirotor : MonoBehaviour
             rotationMatrixEToB[2, 0] * x + rotationMatrixEToB[2, 1] * y + rotationMatrixEToB[2, 2] * z
         );
         return result;
+    }
+
+    public Vector3d getPosition()
+    {
+        return _positionE;
+    }
+
+    public Vector3d getAttitude()
+    {
+        return _attitudeE;
     }
 }
