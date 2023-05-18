@@ -54,4 +54,14 @@ public class PIDController
         return output;
     }
 
+    public void SetSetpoint(double setpoint)
+    {
+        _setpoint = setpoint;
+    }
+
+    public double getSetpoint()
+    {
+        return _setpoint;
+    }
+
 }

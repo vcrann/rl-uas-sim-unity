@@ -8,7 +8,7 @@ public class MultirotorDynamics
     private Vector3d _positionE = new Vector3d(0, 0, 0);
     private Vector3d _velocityB = new Vector3d(0, 0, 0);
     private Vector3d _accelerationB = new Vector3d(0, 0, 0);
-    private Vector3d _attitudeE = new Vector3d(0.1, 0.1, 0.5);
+    private Vector3d _attitudeE = new Vector3d(0, 0, 0);
     private Vector3d _angularVelocityB = new Vector3d(0, 0, 0);
     private Vector3d _angularAccelerationB = new Vector3d(0, 0, 0);
     private Vector3d _thrustB = new Vector3d(0, 0, 0);
@@ -25,9 +25,12 @@ public class MultirotorDynamics
     private Vector3d _gravityE = new Vector3d(0, 0, 9.81);
     private double _dT = 0.001;
     private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.05, -0.2, 0.0, 1.0);
-    private PIDController _rollController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
-    private PIDController _pitchController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
-    private PIDController _yawController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
+    private PIDController _rollRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
+    private PIDController _pitchRateController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
+    private PIDController _yawRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
+    private PIDController _rollAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
+    private PIDController _pitchAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
+    private PIDController _yawAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
 
     private readonly object _stateLock = new object();
 
@@ -76,12 +79,9 @@ public class MultirotorDynamics
         {
             Step(_dT);
         }
-        // double altitudeThrottleModifier = _altitudeController.Calculate(_positionE.z);
-        // _rotors[0].SetThrottle(altitudeThrottleModifier);
-        // _rotors[1].SetThrottle(altitudeThrottleModifier);
-        // _rotors[2].SetThrottle(altitudeThrottleModifier);
-        // _rotors[3].SetThrottle(altitudeThrottleModifier);
-        QuadMixer(_altitudeController.Calculate(_positionE.z), _rollController.Calculate(_attitudeE.x), _pitchController.Calculate(_attitudeE.y), _yawController.Calculate(_attitudeE.z));
+        //QuadMixer(_altitudeController.Calculate(_positionE.z), _rollController.Calculate(_attitudeE.x), _pitchController.Calculate(_attitudeE.y), _yawController.Calculate(_attitudeE.z));
+        AngleToRate();
+        QuadMixer(_altitudeController.Calculate(_positionE.z), _rollRateController.Calculate(_angularVelocityB.x), _pitchRateController.Calculate(_angularVelocityB.y), _yawRateController.Calculate(_angularVelocityB.z));
     }
 
 
@@ -113,6 +113,13 @@ public class MultirotorDynamics
 
         _angularVelocityB += _angularAccelerationB * dT;
         _attitudeE += _angularVelocityB * dT;
+    }
+
+    void AngleToRate()
+    {
+        _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
+        _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
+        _yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
     }
 
     void QuadMixer(double altitudeThrottleModifier, double rollModifier, double pitchModifier, double yawModifier) // only works for Quad X but its a start
@@ -188,5 +195,12 @@ public class MultirotorDynamics
     public Vector3d getAttitude()
     {
         return _attitudeE;
+    }
+
+    public void setManualInput(float rollInput, float pitchInput, float yawInput)
+    {
+        _rollAngleController.SetSetpoint(rollInput * 0.174533);
+        _pitchAngleController.SetSetpoint(-pitchInput * 0.174533);
+        _yawRateController.SetSetpoint(yawInput * 0.174533);
     }
 }
