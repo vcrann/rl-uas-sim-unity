@@ -11,7 +11,7 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        targetObject = GameObject.Find("drone_model").transform;
+        targetObject = GameObject.Find("spinningPropsDrone").transform;
         initialOffset = transform.position - targetObject.position;
     }
 

@@ -34,28 +34,6 @@ public class MultirotorDynamics
 
     private readonly object _stateLock = new object();
 
-
-    // void Start()
-    // {
-    //     Physics.autoSimulation = false;
-    //     _rotors[0] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-    //     _rotors[1] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-    //     _rotors[2] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-    //     _rotors[3] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
-    // }
-
-    // Update is called once per frame
-
-    // void FixedUpdate()
-    // {
-    //     Step(_dT);
-    //     double altitudeThrottleModifier = _altitudeController.Calculate(_positionE.z);
-    //     _rotors[0].SetThrottle(altitudeThrottleModifier);
-    //     _rotors[1].SetThrottle(altitudeThrottleModifier);
-    //     _rotors[2].SetThrottle(altitudeThrottleModifier);
-    //     _rotors[3].SetThrottle(altitudeThrottleModifier);
-    // }
-
     public void RunModel()
     {
         // Temp code to test the model
@@ -187,17 +165,27 @@ public class MultirotorDynamics
         return result;
     }
 
-    public Vector3d getPosition()
+    public Vector3d GetPosition()
     {
         return _positionE;
     }
 
-    public Vector3d getAttitude()
+    public Vector3d GetAttitude()
     {
         return _attitudeE;
     }
 
-    public void setManualInput(float rollInput, float pitchInput, float yawInput, float altitudeInput)
+    public double[] GetRotorSpeeds()
+    {
+        double[] _rotorSpeeds = new double[4];
+        for (int i = 0; i < 4; i++)
+        {
+            _rotorSpeeds[i] = _rotors[i].GetRotorSpeed();
+        }
+        return _rotorSpeeds;
+    }
+
+    public void GetManualInput(float rollInput, float pitchInput, float yawInput, float altitudeInput)
     {
         _rollAngleController.SetSetpoint(rollInput * 0.174533);
         _pitchAngleController.SetSetpoint(-pitchInput * 0.174533);

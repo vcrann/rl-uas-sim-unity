@@ -68,6 +68,11 @@ public class Rotor
         return _rotorTorque;
     }
 
+    public double GetRotorSpeed()
+    {
+        return _rotorSpeed;
+    }
+
     public Vector3d GetGyroscopicTorque(Vector3d angularVelocityB)
     {
         Vector3d gyroscopicTorque = new Vector3d(0, 0, 0);
