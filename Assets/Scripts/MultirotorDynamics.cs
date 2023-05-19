@@ -202,6 +202,6 @@ public class MultirotorDynamics
         _rollAngleController.SetSetpoint(rollInput * 0.174533);
         _pitchAngleController.SetSetpoint(-pitchInput * 0.174533);
         _yawRateController.SetSetpoint(yawInput * 2);
-        _altitudeController.SetSetpoint(_altitudeController.GetSetpoint() - altitudeInput * 0.001f);
+        _altitudeController.SetSetpoint(_altitudeController.GetSetpoint() - altitudeInput * 0.005f);
     }
 }
