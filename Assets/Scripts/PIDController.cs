@@ -59,7 +59,7 @@ public class PIDController
         _setpoint = setpoint;
     }
 
-    public double getSetpoint()
+    public double GetSetpoint()
     {
         return _setpoint;
     }

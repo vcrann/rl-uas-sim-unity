@@ -52,7 +52,8 @@ public class Multirotor : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float forwardInput = Input.GetAxis("Forward");
         float yawInput = Input.GetAxis("Yaw");
-        _multirotorDynamics.setManualInput(horizontalInput, forwardInput, yawInput);
+        float altitudeInput = Input.GetAxis("Vertical");
+        _multirotorDynamics.setManualInput(horizontalInput, forwardInput, yawInput, altitudeInput);
 
         //transform.position = new Vector3((float)_positionE.y, -(float)_positionE.z, (float)_positionE.x);
         //transform.eulerAngles = new Vector3(-(float)_attitudeE.y * 180.0f / Mathf.PI, (float)_attitudeE.z * 180.0f / Mathf.PI, -(float)_attitudeE.x * 180.0f / Mathf.PI);

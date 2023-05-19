@@ -28,8 +28,8 @@ public class MultirotorDynamics
     private PIDController _rollRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
     private PIDController _pitchRateController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
     private PIDController _yawRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
-    private PIDController _rollAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
-    private PIDController _pitchAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
+    private PIDController _rollAngleController = new PIDController(0.001, 0, 5.0, 0.0, 0.0, -1.0, 1.0);
+    private PIDController _pitchAngleController = new PIDController(0.001, 0, 5.0, 0.0, 0.0, -1.0, 1.0);
     private PIDController _yawAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
 
     private readonly object _stateLock = new object();
@@ -119,7 +119,7 @@ public class MultirotorDynamics
     {
         _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
         _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
-        _yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
+        //_yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
     }
 
     void QuadMixer(double altitudeThrottleModifier, double rollModifier, double pitchModifier, double yawModifier) // only works for Quad X but its a start
@@ -197,10 +197,11 @@ public class MultirotorDynamics
         return _attitudeE;
     }
 
-    public void setManualInput(float rollInput, float pitchInput, float yawInput)
+    public void setManualInput(float rollInput, float pitchInput, float yawInput, float altitudeInput)
     {
         _rollAngleController.SetSetpoint(rollInput * 0.174533);
         _pitchAngleController.SetSetpoint(-pitchInput * 0.174533);
-        _yawRateController.SetSetpoint(yawInput * 0.174533);
+        _yawRateController.SetSetpoint(yawInput * 2);
+        _altitudeController.SetSetpoint(_altitudeController.GetSetpoint() - altitudeInput * 0.001f);
     }
 }
