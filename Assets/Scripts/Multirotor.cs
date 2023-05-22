@@ -12,8 +12,10 @@ public class Multirotor : MonoBehaviour
     void Start()
     {
         Physics.autoSimulation = false;
+        rotorObjects[0] = GameObject.Find("Rotor01").transform;
         rotorObjects[1] = GameObject.Find("Rotor02").transform;
         rotorObjects[2] = GameObject.Find("Rotor03").transform;
+        rotorObjects[3] = GameObject.Find("Rotor04").transform;
         modelThread = new Thread(_multirotorDynamics.RunModel);
         modelThread.Start();
     }
@@ -32,7 +34,7 @@ public class Multirotor : MonoBehaviour
 
         //just rotors 2 and 3 for now
         //TODO check directions
-        for (int i = 1; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
             rotorObjects[i].Rotate(0.0f, (float)_multirotorDynamics.GetRotorSpeeds()[i] * 60 * 360.0f / Mathf.PI * Time.deltaTime, 0.0f);
         }

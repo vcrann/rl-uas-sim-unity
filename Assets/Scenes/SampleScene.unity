@@ -326,6 +326,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: spinningPropsDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.46148676
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.46148676
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.5357518
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.5357518
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -104
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -5.482
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237656421590, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.1450111
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237656421590, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02467302
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237656421590, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.09259502
+      objectReference: {fileID: 0}
+    - target: {fileID: 2839837237656421591, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_Name
+      value: Rotor02
+      objectReference: {fileID: 0}
     - target: {fileID: 3397295472186924121, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -369,6 +413,18 @@ PrefabInstance:
     - target: {fileID: 3397295472186924121, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3424510330482486522, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_Name
+      value: Rotor03
+      objectReference: {fileID: 0}
+    - target: {fileID: 7911608658959667253, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1431498
+      objectReference: {fileID: 0}
+    - target: {fileID: 7911608658959667253, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.09019645
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
