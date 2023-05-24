@@ -4,7 +4,7 @@ using System.Timers;
 using UnityEngine;
 public class MultirotorDynamics
 {
-    // Start is called before the first frame update
+    // State Variables
     private Vector3d _positionE = new Vector3d(0, 0, 0);
     private Vector3d _velocityB = new Vector3d(0, 0, 0);
     private Vector3d _accelerationB = new Vector3d(0, 0, 0);
@@ -13,6 +13,8 @@ public class MultirotorDynamics
     private Vector3d _angularAccelerationB = new Vector3d(0, 0, 0);
     private Vector3d _thrustB = new Vector3d(0, 0, 0);
     private Vector3d _torqueB = new Vector3d(0, 0, 0);
+
+    // Aircraft Physical Parameters TODO load from file
     private double _mass = 1.0f;
     private double _inertiaXx = 4.856e-3f;
     private double _inertiaYy = 4.856e-3f;
@@ -21,9 +23,16 @@ public class MultirotorDynamics
     Rotor[] _rotors = new Rotor[4];
     private double[] _armLengths = new double[4] { 0.1, 0.1, 0.1, 0.1 };
     private double[] _armAngles = new double[4] { Mathd.PI / 4.0, 3.0 * Mathd.PI / 4.0, 5.0 * Mathd.PI / 4.0, 7.0 * Mathd.PI / 4.0 };
+    private double _dragCoefficient = 0.425;
+    private double _topArea = 0.02;
+    private double _frontArea = 0.01;
 
+    // Environment Parameters
+    private double _airDensity = 1.225;
     private Vector3d _gravityE = new Vector3d(0, 0, 9.81);
     private double _dT = 0.001;
+
+    //Controllers
     private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.05, -0.2, 0.0, 1.0);
     private PIDController _rollRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
     private PIDController _pitchRateController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
@@ -173,6 +182,22 @@ public class MultirotorDynamics
     public Vector3d GetAttitude()
     {
         return _attitudeE;
+    }
+
+    Vector3d CalculateLinearDrag()
+    {
+        Vector3d drag = new Vector3d();
+        double effectiveArea = _topArea * Mathd.Sin(_attitudeE.x) + _sideArea * Mathd.Sin(_attitudeE.y);
+        drag = 0.5 * _linearDragCoefficient * _density * _velocityB * _velocityB * f;
+    }
+
+    Vector3d CalculateAngularDrag()
+    {
+        // Vector3d drag = new Vector3d();
+        // drag.x = -_angularDragCoefficient * _angularVelocityB.x * _angularVelocityB.x * _angularVelocityB.x / Mathd.Abs(_angularVelocityB.x);
+        // drag.y = -_angularDragCoefficient * _angularVelocityB.y * _angularVelocityB.y * _angularVelocityB.y / Mathd.Abs(_angularVelocityB.y);
+        // drag.z = -_angularDragCoefficient * _angularVelocityB.z * _angularVelocityB.z * _angularVelocityB.z / Mathd.Abs(_angularVelocityB.z);
+        // return drag;
     }
 
     public double[] GetRotorSpeeds()
