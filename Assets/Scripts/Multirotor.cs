@@ -7,7 +7,7 @@ public class Multirotor : MonoBehaviour
     private MultirotorDynamics _multirotorDynamics = new MultirotorDynamics();
     private Thread modelThread;
     public Transform[] rotorObjects = new Transform[4];
-
+    Plane plane = new Plane(Vector3.up, 0);
     // Start is called before the first frame update
     void Start()
     {
@@ -38,5 +38,22 @@ public class Multirotor : MonoBehaviour
         {
             rotorObjects[i].Rotate(0.0f, (float)_multirotorDynamics.GetRotorSpeeds()[i] * 60 * 360.0f / Mathf.PI * Time.deltaTime, 0.0f);
         }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            _multirotorDynamics.SetDesiredPosition(new Vector3(GetMousePosition().z, GetMousePosition().x, -GetMousePosition().y));
+        }
+    }
+
+    Vector3 GetMousePosition()
+    {
+        float distanceToPlane;
+        Vector3 worldMousePosition = new Vector3();
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (plane.Raycast(ray, out distanceToPlane))
+        {
+            worldMousePosition = ray.GetPoint(distanceToPlane);
+        }
+        return worldMousePosition;
     }
 }
