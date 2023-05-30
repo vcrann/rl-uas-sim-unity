@@ -8,6 +8,7 @@ public class Multirotor : MonoBehaviour
     private Thread modelThread;
     public Transform[] rotorObjects = new Transform[4];
     Plane plane = new Plane(Vector3.up, 0);
+    public Camera overheadCamera;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +24,7 @@ public class Multirotor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Position: " + _multirotorDynamics.GetPosition().ToString());
         transform.position = new Vector3((float)_multirotorDynamics.GetPosition().y, -(float)_multirotorDynamics.GetPosition().z, (float)_multirotorDynamics.GetPosition().x);
         transform.eulerAngles = new Vector3(-(float)_multirotorDynamics.GetAttitude().y * 180.0f / Mathf.PI, (float)_multirotorDynamics.GetAttitude().z * 180.0f / Mathf.PI, -(float)_multirotorDynamics.GetAttitude().x * 180.0f / Mathf.PI);
 
@@ -49,7 +51,7 @@ public class Multirotor : MonoBehaviour
     {
         float distanceToPlane;
         Vector3 worldMousePosition = new Vector3();
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = overheadCamera.ScreenPointToRay(Input.mousePosition);
         if (plane.Raycast(ray, out distanceToPlane))
         {
             worldMousePosition = ray.GetPoint(distanceToPlane);

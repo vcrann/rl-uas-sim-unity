@@ -43,11 +43,11 @@ public class PIDController
         double output = pOutput + iOutput + dOutput;
         if (output > _upperLimit)
         {
-            output = 1.0f;
+            output = _upperLimit;
         }
         else if (output < _lowerLimit)
         {
-            output = 0.0f;
+            output = _lowerLimit;
         }
         _previousError = _error;
 

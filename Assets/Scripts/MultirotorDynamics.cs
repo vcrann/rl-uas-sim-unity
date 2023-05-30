@@ -40,12 +40,12 @@ public class MultirotorDynamics
     private PIDController _pitchAngleController = new PIDController(0.001, 0, 5.0, 0.0, 0.0, -1.0, 1.0);
     private PIDController _yawAngleController = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
 
-    private PIDController _velocityControllerX = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
-    private PIDController _velocityControllerY = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
-    private PIDController _velocityControllerZ = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
-    private PIDController _positionControllerX = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
-    private PIDController _positionControllerY = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
-    private PIDController _positionControllerZ = new PIDController(0.001, 0, 0.5, 0.0, 0.0, -1.0, 1.0);
+    private PIDController _velocityControllerX = new PIDController(0.001, 0, 1, 0.1, 0.1, -10.0, 10.0);
+    private PIDController _velocityControllerY = new PIDController(0.001, 0, 1, 0.1, 0.1, -10.0, 10.0);
+    private PIDController _velocityControllerZ = new PIDController(0.001, 0, 1, 0.1, 0.1, -10.0, 10.0);
+    private PIDController _positionControllerX = new PIDController(0.001, 0, 1, 0.0, 0.0, -2.0, 2.0);
+    private PIDController _positionControllerY = new PIDController(0.001, 0, 1, 0.0, 0.0, -2.0, 2.0);
+    private PIDController _positionControllerZ = new PIDController(0.001, 0, 1, 0.0, 0.0, -2.0, 2.0);
 
     // Lock for thread safety
     private readonly object _stateLock = new object();
@@ -75,7 +75,8 @@ public class MultirotorDynamics
         }
         PositionToVelocity();
         _rollAngleController.SetSetpoint(_velocityControllerY.Calculate(_velocityB.y));
-        _pitchAngleController.SetSetpoint(_velocityControllerX.Calculate(_velocityB.x));
+        _pitchAngleController.SetSetpoint(-_velocityControllerX.Calculate(_velocityB.x));
+        //Debug.Log(_velocityControllerY.Calculate(_velocityB.y) + " " + -_velocityControllerX.Calculate(_velocityB.x));
         AngleToRate();
         QuadMixer(_altitudeController.Calculate(_positionE.z), _rollRateController.Calculate(_angularVelocityB.x), _pitchRateController.Calculate(_angularVelocityB.y), _yawRateController.Calculate(_angularVelocityB.z));
 
@@ -117,12 +118,16 @@ public class MultirotorDynamics
         _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
         _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
         //_yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
+        Debug.Log(_rollAngleController.Calculate(_attitudeE.x) + " " + _pitchAngleController.Calculate(_attitudeE.y));
     }
 
     void PositionToVelocity()
     {
-        _velocityControllerX.SetSetpoint(_positionControllerX.Calculate(_positionE.x));
-        _velocityControllerY.SetSetpoint(_positionControllerY.Calculate(_positionE.y));
+        Vector3d positionControllerOutput = new Vector3d(_positionControllerX.Calculate(_positionE.x), _positionControllerY.Calculate(_positionE.y), _positionE.z);
+        positionControllerOutput = EarthToBody(positionControllerOutput, _attitudeE);
+        _velocityControllerX.SetSetpoint(positionControllerOutput.x);
+        _velocityControllerY.SetSetpoint(positionControllerOutput.y);
+        //Debug.Log("Position Controller Output: " + positionControllerOutput);
     }
 
     void QuadMixer(double altitudeThrottleModifier, double rollModifier, double pitchModifier, double yawModifier) // only works for Quad X but its a start
