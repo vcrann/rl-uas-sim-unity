@@ -118,7 +118,7 @@ public class MultirotorDynamics
         _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
         _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
         //_yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
-        Debug.Log(_rollAngleController.Calculate(_attitudeE.x) + " " + _pitchAngleController.Calculate(_attitudeE.y));
+        //Debug.Log(_rollAngleController.Calculate(_attitudeE.x) + " " + _pitchAngleController.Calculate(_attitudeE.y));
     }
 
     void PositionToVelocity()

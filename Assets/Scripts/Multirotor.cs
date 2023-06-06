@@ -24,7 +24,7 @@ public class Multirotor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Position: " + _multirotorDynamics.GetPosition().ToString());
+        //Debug.Log("Position: " + _multirotorDynamics.GetPosition().ToString());
         transform.position = new Vector3((float)_multirotorDynamics.GetPosition().y, -(float)_multirotorDynamics.GetPosition().z, (float)_multirotorDynamics.GetPosition().x);
         transform.eulerAngles = new Vector3(-(float)_multirotorDynamics.GetAttitude().y * 180.0f / Mathf.PI, (float)_multirotorDynamics.GetAttitude().z * 180.0f / Mathf.PI, -(float)_multirotorDynamics.GetAttitude().x * 180.0f / Mathf.PI);
 
