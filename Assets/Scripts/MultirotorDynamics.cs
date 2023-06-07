@@ -30,6 +30,7 @@ public class MultirotorDynamics
     private double _airDensity = 1.225;
     private Vector3d _gravityE = new Vector3d(0, 0, 9.81);
     private double _dT = 0.001;
+    private int _flightMode = 0;
 
     //Controllers
     private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.05, -0.2, 0.0, 1.0);
@@ -73,11 +74,17 @@ public class MultirotorDynamics
         {
             Step(_dT);
         }
-        PositionToVelocity();
-        _rollAngleController.SetSetpoint(_velocityControllerY.Calculate(_velocityB.y));
-        _pitchAngleController.SetSetpoint(-_velocityControllerX.Calculate(_velocityB.x));
-        //Debug.Log(_velocityControllerY.Calculate(_velocityB.y) + " " + -_velocityControllerX.Calculate(_velocityB.x));
-        AngleToRate();
+        switch (_flightMode)
+        {
+            case 0:
+                AngleToRate();
+                break;
+            case 1:
+                PositionToVelocity();
+                VelocityToAngle();
+                AngleToRate();
+                break;
+        }
         QuadMixer(_altitudeController.Calculate(_positionE.z), _rollRateController.Calculate(_angularVelocityB.x), _pitchRateController.Calculate(_angularVelocityB.y), _yawRateController.Calculate(_angularVelocityB.z));
 
     }
@@ -112,15 +119,6 @@ public class MultirotorDynamics
         _angularVelocityB += _angularAccelerationB * dT;
         _attitudeE += _angularVelocityB * dT;
     }
-
-    void AngleToRate()
-    {
-        _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
-        _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
-        //_yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
-        //Debug.Log(_rollAngleController.Calculate(_attitudeE.x) + " " + _pitchAngleController.Calculate(_attitudeE.y));
-    }
-
     void PositionToVelocity()
     {
         Vector3d positionControllerOutput = new Vector3d(_positionControllerX.Calculate(_positionE.x), _positionControllerY.Calculate(_positionE.y), _positionE.z);
@@ -129,6 +127,20 @@ public class MultirotorDynamics
         _velocityControllerY.SetSetpoint(positionControllerOutput.y);
         //Debug.Log("Position Controller Output: " + positionControllerOutput);
     }
+    void VelocityToAngle()
+    {
+        _rollAngleController.SetSetpoint(_velocityControllerY.Calculate(_velocityB.y));
+        _pitchAngleController.SetSetpoint(-_velocityControllerX.Calculate(_velocityB.x));
+    }
+    void AngleToRate()
+    {
+        _rollRateController.SetSetpoint(_rollAngleController.Calculate(_attitudeE.x));
+        _pitchRateController.SetSetpoint(_pitchAngleController.Calculate(_attitudeE.y));
+        //_yawRateController.SetSetpoint(_yawAngleController.Calculate(_attitudeE.z));
+        //Debug.Log(_rollAngleController.Calculate(_attitudeE.x) + " " + _pitchAngleController.Calculate(_attitudeE.y));
+    }
+
+
 
     void QuadMixer(double altitudeThrottleModifier, double rollModifier, double pitchModifier, double yawModifier) // only works for Quad X but its a start
     {
@@ -233,7 +245,17 @@ public class MultirotorDynamics
         return _rotorSpeeds;
     }
 
-    public void GetManualInput(float rollInput, float pitchInput, float yawInput, float altitudeInput)
+    public void SetFlightMode(int flightMode)
+    {
+        _flightMode = flightMode;
+        if (_flightMode == 1)
+        {
+            _positionControllerX.SetSetpoint(_positionE.x);
+            _positionControllerY.SetSetpoint(_positionE.y);
+        }
+    }
+
+    public void SetManualInput(float rollInput, float pitchInput, float yawInput, float altitudeInput)
     {
         _rollAngleController.SetSetpoint(rollInput * 0.174533);
         _pitchAngleController.SetSetpoint(-pitchInput * 0.174533);

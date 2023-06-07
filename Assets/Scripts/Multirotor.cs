@@ -9,6 +9,7 @@ public class Multirotor : MonoBehaviour
     public Transform[] rotorObjects = new Transform[4];
     Plane plane = new Plane(Vector3.up, 0);
     public Camera overheadCamera;
+    private int _flightMode = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,12 +29,6 @@ public class Multirotor : MonoBehaviour
         transform.position = new Vector3((float)_multirotorDynamics.GetPosition().y, -(float)_multirotorDynamics.GetPosition().z, (float)_multirotorDynamics.GetPosition().x);
         transform.eulerAngles = new Vector3(-(float)_multirotorDynamics.GetAttitude().y * 180.0f / Mathf.PI, (float)_multirotorDynamics.GetAttitude().z * 180.0f / Mathf.PI, -(float)_multirotorDynamics.GetAttitude().x * 180.0f / Mathf.PI);
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float forwardInput = Input.GetAxis("Forward");
-        float yawInput = Input.GetAxis("Yaw");
-        float altitudeInput = Input.GetAxis("Vertical");
-        _multirotorDynamics.GetManualInput(horizontalInput, forwardInput, yawInput, altitudeInput);
-
         //just rotors 2 and 3 for now
         //TODO check directions
         for (int i = 0; i < 4; i++)
@@ -41,9 +36,27 @@ public class Multirotor : MonoBehaviour
             rotorObjects[i].Rotate(0.0f, (float)_multirotorDynamics.GetRotorSpeeds()[i] * 60 * 360.0f / Mathf.PI * Time.deltaTime, 0.0f);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        switch (_flightMode)
         {
-            _multirotorDynamics.SetDesiredPosition(new Vector3(GetMousePosition().z, GetMousePosition().x, -GetMousePosition().y));
+            case 0:
+                float horizontalInput = Input.GetAxis("Horizontal");
+                float forwardInput = Input.GetAxis("Forward");
+                float yawInput = Input.GetAxis("Yaw");
+                float altitudeInput = Input.GetAxis("Vertical");
+                _multirotorDynamics.SetManualInput(horizontalInput, forwardInput, yawInput, altitudeInput);
+                break;
+            case 1:
+                if (Input.GetMouseButtonDown(0))
+                {
+                    // used to check if the mouse is over the overhead camera view, otherwise interacting with ui elements will cause the drone to move
+                    Vector3 viewportMousePosition = overheadCamera.ScreenToViewportPoint(Input.mousePosition);
+                    if (viewportMousePosition.x >= 0 && viewportMousePosition.x <= 1 && viewportMousePosition.y >= 0 && viewportMousePosition.y <= 1)
+                    {
+                        Vector3 mousePosition = GetMousePosition();
+                        _multirotorDynamics.SetDesiredPosition(new Vector3(mousePosition.z, mousePosition.x, -mousePosition.y));
+                    }
+                }
+                break;
         }
     }
 
@@ -57,5 +70,12 @@ public class Multirotor : MonoBehaviour
             worldMousePosition = ray.GetPoint(distanceToPlane);
         }
         return worldMousePosition;
+    }
+
+    public void SetFlightMode(int flightMode)
+    {
+        _flightMode = flightMode;
+        _multirotorDynamics.SetFlightMode(flightMode);
+        Debug.Log("Flight mode set to " + flightMode);
     }
 }

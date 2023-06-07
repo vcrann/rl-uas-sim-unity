@@ -123,6 +123,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &570168726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 570168728}
+  - component: {fileID: 570168727}
+  - component: {fileID: 570168729}
+  m_Layer: 5
+  m_Name: UIDocument
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &570168727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 570168726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: ac78320609026a10fbbd9bb4f843a307, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 9cae00c6e7d65bb6c8b1579a22883566, type: 3}
+  m_SortingOrder: 0
+--- !u!4 &570168728
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 570168726}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &570168729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 570168726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1602e85226accd0ef877535c9f9504d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,7 +468,7 @@ Transform:
   m_GameObject: {fileID: 1477320042}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -425,7 +486,6 @@ GameObject:
   - component: {fileID: 1867638451}
   - component: {fileID: 1867638450}
   - component: {fileID: 1867638449}
-  - component: {fileID: 1867638448}
   m_Layer: 0
   m_Name: Overhead Camera
   m_TagString: MainCamera
@@ -433,19 +493,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1867638448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1867638447}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05bfa312295bac810816aa5a364e1445, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetObject: {fileID: 0}
 --- !u!114 &1867638449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,6 +582,10 @@ PrefabInstance:
     - target: {fileID: 2625122047043225315, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_Name
       value: spinningPropsDrone
+      objectReference: {fileID: 0}
+    - target: {fileID: 2625122047043225315, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_TagString
+      value: Multirotor
       objectReference: {fileID: 0}
     - target: {fileID: 2839837237640209801, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_LocalRotation.w
@@ -632,6 +683,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rotor03
       objectReference: {fileID: 0}
+    - target: {fileID: 7149728572222262056, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: -7299989757561718281, guid: 5ba563b09c191b94e8d92f64d0eba9fa, type: 3}
     - target: {fileID: 7911608658959667253, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.1431498

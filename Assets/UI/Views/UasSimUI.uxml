@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; justify-content: flex-end; flex-basis: auto;">
+        <ui:VisualElement name="Container" style="flex-basis: 20%; justify-content: space-around; align-items: flex-start; padding-left: 5%; padding-right: 15%;">
+            <ui:RadioButtonGroup label="Flight Mode" value="0" choices="Stabilized, Position" name="FlightMode" tooltip="Select flight mode" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
