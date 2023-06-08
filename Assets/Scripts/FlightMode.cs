@@ -1,25 +1,35 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class FlightMode : MonoBehaviour
 {
-    private RadioButtonGroup flightModeSelector;
-    private Multirotor multirotorScript;
+    private Button _createMultirotorButton;
+    private RadioButtonGroup _flightModeSelector;
+    private Multirotor _multirotorScript;
 
     private void OnEnable()
     {
         var rootVisualElement = GetComponent<UIDocument>().rootVisualElement;
 
-        flightModeSelector = rootVisualElement.Q<RadioButtonGroup>("FlightMode");
+        _createMultirotorButton = rootVisualElement.Q<Button>("CreateMultirotor");
+        _createMultirotorButton.clicked += OnClickCreateMultirotor;
 
-        multirotorScript = GameObject.FindGameObjectWithTag("Multirotor").GetComponent<Multirotor>();
+        _flightModeSelector = rootVisualElement.Q<RadioButtonGroup>("FlightMode");
 
-        flightModeSelector.RegisterValueChangedCallback(
+        _multirotorScript = GameObject.FindGameObjectWithTag("Multirotor").GetComponent<Multirotor>();
+
+        _flightModeSelector.RegisterValueChangedCallback(
         (evt) =>
         {
-            if (evt.target == flightModeSelector)
-                multirotorScript.SetFlightMode(evt.newValue);
+            if (evt.target == _flightModeSelector)
+                _multirotorScript.SetFlightMode(evt.newValue);
         });
+    }
+
+    private void OnClickCreateMultirotor()
+    {
+        SceneManager.LoadScene("MultirotorCreator");
     }
 
 }

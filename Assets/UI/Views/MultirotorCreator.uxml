@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Views/MultirotorCreatorStyles.uss?fileID=7433441132597879392&amp;guid=c549e8fdc3d0b36079498767acc5afa9&amp;type=3#MultirotorCreatorStyles" />
+    <ui:VisualElement name="LeftSection" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.49); align-items: flex-start; width: 50%; height: 100%; margin-left: 0; padding-left: 50px; padding-right: 25px;">
+        <ui:Label tabindex="-1" text="Create Multirotor" display-tooltip-when-elided="true" enable-rich-text="true" name="Title" style="font-size: 30%; -unity-font: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=4ff137dd8bd74fab49f1adbbb791c11a&amp;type=3#NotInter-Regular&apos;); -unity-font-style: normal; align-items: auto; justify-content: flex-start; align-self: center;" />
+        <ui:VisualElement name="ValueEntry" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 100%;">
+            <ui:TextField picking-mode="Ignore" label="Multirotor Name" name="MultirotorNameField" />
+            <ui:DoubleField label="Parameter 1" value="42.2" name="Parameter1Entry" class="parameter-entry" style="height: 38px;" />
+            <ui:DoubleField label="Parameter 2" value="42.2" name="Parameter2Entry" class="parameter-entry" style="height: 38px;" />
+            <ui:DoubleField label="Parameter 3" value="42.2" name="Parameter3Entry" class="parameter-entry" style="height: 38px;" />
+        </ui:VisualElement>
+        <ui:Button text="Save" display-tooltip-when-elided="true" name="SaveButton" style="align-self: flex-end;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="RightSection" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-self: flex-end; width: 50%; height: 100%; justify-content: flex-start; flex-direction: column; flex-wrap: nowrap; position: absolute; margin-right: 0; padding-right: 50px; padding-left: 25px;">
+        <ui:Label tabindex="-1" text="Select Multirotor" display-tooltip-when-elided="true" enable-rich-text="true" name="MultirotorSelectTitle" style="font-size: 30%; -unity-font: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=4ff137dd8bd74fab49f1adbbb791c11a&amp;type=3#NotInter-Regular&apos;); -unity-font-style: normal; align-items: auto; justify-content: flex-start; align-self: center;" />
+        <ui:DropdownField label="Select Existing Multirotor" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="MultirotorSelection" />
+        <ui:VisualElement name="MultirotorManagement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-end; align-items: auto; align-self: auto; flex-direction: row;">
+            <ui:Button text="Delete" display-tooltip-when-elided="true" name="Delete" style="align-self: flex-start; background-color: rgba(208, 62, 64, 0.78);" />
+            <ui:Button text="Load" display-tooltip-when-elided="true" name="Load" style="align-self: flex-start; position: relative; left: auto; flex-direction: column; align-items: auto;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

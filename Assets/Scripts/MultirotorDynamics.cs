@@ -33,7 +33,7 @@ public class MultirotorDynamics
     private int _flightMode = 0;
 
     //Controllers
-    private PIDController _altitudeController = new PIDController(0.001, -1, -0.1, -0.05, -0.2, 0.0, 1.0);
+    private PIDController _altitudeController = new PIDController(0.001, -5, -0.1, -0.05, -0.2, 0.0, 1.0);
     private PIDController _rollRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
     private PIDController _pitchRateController = new PIDController(0.001, 0, 0.5, 0.1, 0.1, -1.0, 1.0);
     private PIDController _yawRateController = new PIDController(0.001, 0, 0.5, 0.05, 0.1, -1.0, 1.0);
