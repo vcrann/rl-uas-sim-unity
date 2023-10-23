@@ -5,7 +5,7 @@ using UnityEngine;
 public class MultirotorDynamics
 {
     // State Variables
-    private Vector3d _positionE = new Vector3d(0, 0, 0);
+    private Vector3d _positionE = new Vector3d(0, 0, -5);
     private Vector3d _velocityB = new Vector3d(0, 0, 0);
     private Vector3d _accelerationB = new Vector3d(0, 0, 0);
     private Vector3d _attitudeE = new Vector3d(0, 0, 0);
@@ -74,18 +74,6 @@ public class MultirotorDynamics
         {
             Step(_dT);
         }
-        switch (_flightMode)
-        {
-            case 0:
-                AngleToRate();
-                break;
-            case 1:
-                PositionToVelocity();
-                VelocityToAngle();
-                AngleToRate();
-                break;
-        }
-        QuadMixer(_altitudeController.Calculate(_positionE.z), _rollRateController.Calculate(_angularVelocityB.x), _pitchRateController.Calculate(_angularVelocityB.y), _yawRateController.Calculate(_angularVelocityB.z));
 
     }
 
@@ -111,13 +99,26 @@ public class MultirotorDynamics
 
         //Angular
         Vector3d _inertia = new Vector3d(_inertiaXx, _inertiaYy, _inertiaZz);
-        Vector3d _unscaledAngularAccelerationB = (-Vector3d.Cross(_angularVelocityB, Vector3d.Scale(_inertia, _angularVelocityB)) + _torqueB);
+        Vector3d _unscaledAngularAccelerationB = -Vector3d.Cross(_angularVelocityB, Vector3d.Scale(_inertia, _angularVelocityB)) + _torqueB;
         _angularAccelerationB.x = _unscaledAngularAccelerationB.x / _inertia.x;
         _angularAccelerationB.y = _unscaledAngularAccelerationB.y / _inertia.y;
         _angularAccelerationB.z = _unscaledAngularAccelerationB.z / _inertia.z;
 
         _angularVelocityB += _angularAccelerationB * dT;
         _attitudeE += _angularVelocityB * dT;
+
+        // Wrap angles
+        for (int i = 0; i < 3; i++)
+        {
+            if (_attitudeE[i] > Mathd.PI)
+            {
+                _attitudeE[i] = -Mathd.PI + (_attitudeE[i] % Mathd.PI);
+            }
+            else if (_attitudeE[i] < -Mathd.PI)
+            {
+                _attitudeE[i] = Mathd.PI + (_attitudeE[i] % Mathd.PI);
+            }
+        }
     }
     void PositionToVelocity()
     {
@@ -148,6 +149,14 @@ public class MultirotorDynamics
         _rotors[1].SetThrottle(altitudeThrottleModifier - rollModifier * altitudeThrottleModifier - pitchModifier * altitudeThrottleModifier + yawModifier * altitudeThrottleModifier);
         _rotors[2].SetThrottle(altitudeThrottleModifier + rollModifier * altitudeThrottleModifier - pitchModifier * altitudeThrottleModifier - yawModifier * altitudeThrottleModifier);
         _rotors[3].SetThrottle(altitudeThrottleModifier + rollModifier * altitudeThrottleModifier + pitchModifier * altitudeThrottleModifier + yawModifier * altitudeThrottleModifier);
+    }
+
+    public void SetRotorThrottles(double[] rotorThrottles)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            _rotors[i].SetThrottle(rotorThrottles[i]);
+        }
     }
 
     Vector3d BodyToEarth(Vector3d vectorB, Vector3d rotationB)
@@ -217,6 +226,16 @@ public class MultirotorDynamics
         return _attitudeE;
     }
 
+    public Vector3d GetVelocity()
+    {
+        return _velocityB;
+    }
+
+    public Vector3d GetAngularVelocity()
+    {
+        return _angularVelocityB;
+    }
+
     //TODO implement angular drag and improve linear with blade flapping etc
     Vector3d CalculateLinearDrag()
     {
@@ -267,5 +286,17 @@ public class MultirotorDynamics
     {
         _positionControllerX.SetSetpoint(desiredPosition.x);
         _positionControllerY.SetSetpoint(desiredPosition.y);
+    }
+
+    public void Reset()
+    {
+        _positionE = new Vector3d(0, 0, -5);
+        _velocityB = new Vector3d(0, 0, 0);
+        _accelerationB = new Vector3d(0, 0, 0);
+        _attitudeE = new Vector3d(Mathd.PI, Mathd.PI, Mathd.PI);
+        _angularVelocityB = new Vector3d(0, 0, 0);
+        _angularAccelerationB = new Vector3d(0, 0, 0);
+        _thrustB = new Vector3d(0, 0, 0);
+        _torqueB = new Vector3d(0, 0, 0);
     }
 }
