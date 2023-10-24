@@ -90,20 +90,20 @@ public class MultirotorAgent : Agent
 
         // Reward for distance to target
         float normalisedDistanceToTarget = Mathf.Clamp(Vector3.Distance((Vector3)_multirotorDynamics.GetPosition(), goalLocation) / maxGoalDistance, 0, 1);
-        SetReward(Mathf.Exp(-5 * normalisedDistanceToTarget));
+        AddReward(Mathf.Exp(-5 * normalisedDistanceToTarget));
 
         // Reward for not yawing like crazy
-        SetReward(-Mathf.Clamp((float)_multirotorDynamics.GetAngularVelocity().z / maxAngularSpeed, -1, 1));
+        AddReward(-Mathf.Clamp((float)_multirotorDynamics.GetAngularVelocity().z / maxAngularSpeed, -1, 1));
 
         if (Vector3.Dot(transform.up, Vector3.down) > 0)
         {
-            SetReward(-100.0f);
+            AddReward(-100.0f);
             EndEpisode();
         }
 
         if (_multirotorDynamics.GetPosition().z > 0 | _multirotorDynamics.GetPosition().z < -flyingAreaHeight | _multirotorDynamics.GetPosition().x > flyingAreaDepth / 2 | _multirotorDynamics.GetPosition().x < -flyingAreaDepth / 2 | _multirotorDynamics.GetPosition().y > flyingAreaWidth / 2 | _multirotorDynamics.GetPosition().y < -flyingAreaWidth / 2)
         {
-            SetReward(-100.0f);
+            AddReward(-100.0f);
             EndEpisode();
         }
     }
