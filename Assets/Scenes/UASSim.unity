@@ -793,7 +793,7 @@ PrefabInstance:
     - target: {fileID: 4145628891617456813, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 5022602860645237092, guid: 28271a7a5813d4ff8b8ca02df94a875b, type: 3}
     - target: {fileID: 4145628891617456813, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_BehaviorName
       value: MultirotorAgent
