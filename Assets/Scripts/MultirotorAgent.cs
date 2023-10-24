@@ -5,7 +5,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
-using Unity.VisualScripting;
+
 
 public class MultirotorAgent : Agent
 {
@@ -89,6 +89,7 @@ public class MultirotorAgent : Agent
         float distanceToTarget = Vector3.Distance((Vector3)_multirotorDynamics.GetPosition(), goalLocation);
 
         SetReward(1 / (distanceToTarget + 0.01f));
+        SetReward(-Mathf.Abs((float)_multirotorDynamics.GetAngularVelocity().z / maxAngularSpeed * 10));
 
         if (Vector3.Dot(transform.up, Vector3.down) > 0)
         {
