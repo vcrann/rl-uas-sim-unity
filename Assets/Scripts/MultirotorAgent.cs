@@ -29,6 +29,10 @@ public class MultirotorAgent : Agent
     {
         if (!Academy.Instance.IsCommunicatorOn)
         {
+            this.MaxStep = 0;
+        }
+        else
+        {
             this.MaxStep = 1000;
         }
     }
