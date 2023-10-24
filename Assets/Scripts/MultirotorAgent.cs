@@ -19,6 +19,7 @@ public class MultirotorAgent : Agent
     public float flyingAreaHeight = 10.0f;
     public float flyingAreaWidth = 10.0f;
     public float flyingAreaDepth = 10.0f;
+    float maxGoalDistance = 0.0f;
     public float maxSpeed = 20.0f;
     public float maxAngularSpeed = 20.0f;
 
@@ -40,8 +41,10 @@ public class MultirotorAgent : Agent
         rotorObjects[1] = GameObject.Find("Rotor02").transform;
         rotorObjects[2] = GameObject.Find("Rotor03").transform;
         rotorObjects[3] = GameObject.Find("Rotor04").transform;
-        modelThread = new Thread(_multirotorDynamics.RunModel);
-        modelThread.Start();
+        _multirotorDynamics.SetupRotors();
+        maxGoalDistance = Mathf.Sqrt(flyingAreaHeight * flyingAreaHeight + flyingAreaWidth * flyingAreaWidth + flyingAreaDepth * flyingAreaDepth);
+        // modelThread = new Thread(_multirotorDynamics.RunModel);
+        // modelThread.Start();
     }
 
     public override void OnEpisodeBegin()
@@ -85,23 +88,33 @@ public class MultirotorAgent : Agent
         double[] rotorThrottles = { actionBuffers.ContinuousActions[0] / 2 + 0.5, actionBuffers.ContinuousActions[1] / 2 + 0.5, actionBuffers.ContinuousActions[2] / 2 + 0.5, actionBuffers.ContinuousActions[3] / 2 + 0.5 };
         _multirotorDynamics.SetRotorThrottles(rotorThrottles);
 
-        // Rewards
-        float distanceToTarget = Vector3.Distance((Vector3)_multirotorDynamics.GetPosition(), goalLocation);
+        // Reward for distance to target
+        float normalisedDistanceToTarget = Mathf.Clamp(Vector3.Distance((Vector3)_multirotorDynamics.GetPosition(), goalLocation) / maxGoalDistance, 0, 1);
+        AddReward(Mathf.Exp(-5 * normalisedDistanceToTarget));
 
-        SetReward(1 / (distanceToTarget + 0.01f));
-        SetReward(-Mathf.Abs((float)_multirotorDynamics.GetAngularVelocity().z / maxAngularSpeed * 10));
+        // Reward for not yawing like crazy
+        AddReward(-Mathf.Abs(Mathf.Clamp((float)_multirotorDynamics.GetAngularVelocity().z / maxAngularSpeed, -1, 1)));
 
         if (Vector3.Dot(transform.up, Vector3.down) > 0)
         {
-            SetReward(-100.0f);
+            AddReward(-100.0f);
             EndEpisode();
         }
 
         if (_multirotorDynamics.GetPosition().z > 0 | _multirotorDynamics.GetPosition().z < -flyingAreaHeight | _multirotorDynamics.GetPosition().x > flyingAreaDepth / 2 | _multirotorDynamics.GetPosition().x < -flyingAreaDepth / 2 | _multirotorDynamics.GetPosition().y > flyingAreaWidth / 2 | _multirotorDynamics.GetPosition().y < -flyingAreaWidth / 2)
         {
-            SetReward(-100.0f);
+            AddReward(-100.0f);
             EndEpisode();
         }
+    }
+
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        continuousActionsOut[0] = -1.0f;
+        continuousActionsOut[1] = -1.0f;
+        continuousActionsOut[2] = -1.0f;
+        continuousActionsOut[3] = -1.0f;
     }
     void Update()
     {
@@ -114,5 +127,10 @@ public class MultirotorAgent : Agent
         {
             rotorObjects[i].Rotate(0.0f, (float)_multirotorDynamics.GetRotorSpeeds()[i] * 60 * 360.0f / Mathf.PI * Time.deltaTime, 0.0f);
         }
+    }
+
+    void FixedUpdate()
+    {
+        _multirotorDynamics.Step(Time.fixedDeltaTime);
     }
 }
