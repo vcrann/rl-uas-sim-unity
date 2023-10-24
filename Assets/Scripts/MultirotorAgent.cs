@@ -27,14 +27,15 @@ public class MultirotorAgent : Agent
 
     public override void Initialize()
     {
-        if (!Academy.Instance.IsCommunicatorOn)
-        {
-            this.MaxStep = 0;
-        }
-        else
-        {
-            this.MaxStep = 1000;
-        }
+        // if (!Academy.Instance.IsCommunicatorOn)
+        // {
+        //     this.MaxStep = 0;
+        // }
+        // else
+        // {
+        //     this.MaxStep = 1000;
+        // }
+        this.MaxStep = 1000;
     }
 
     // Start is called before the first frame update
