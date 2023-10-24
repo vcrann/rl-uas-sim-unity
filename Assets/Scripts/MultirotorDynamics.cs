@@ -29,7 +29,7 @@ public class MultirotorDynamics
     // Environment Parameters
     private double _airDensity = 1.225;
     private Vector3d _gravityE = new Vector3d(0, 0, 9.81);
-    private double _dT = 0.001;
+    private float _dT = 0.001f;
     private int _flightMode = 0;
 
     //Controllers
@@ -67,6 +67,15 @@ public class MultirotorDynamics
         modelTimer.Enabled = true;
     }
 
+    public void SetupRotors()
+    {
+        // Temp code to test the model
+        _rotors[0] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[1] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[2] = new Rotor(true, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+        _rotors[3] = new Rotor(false, 0.05, 3.357e-5, 0.0000001984, 0.000000003733, 0.098, 6432, 1779);
+    }
+
     private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
     {
 
@@ -79,7 +88,7 @@ public class MultirotorDynamics
 
 
 
-    void Step(double dT)
+    public void Step(float dT)
     {
         // Calculate the thrust and torque
         _thrustB = new Vector3d(0, 0, 0);
