@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18029164, g: 0.2257242, b: 0.30693048, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -793,7 +793,7 @@ PrefabInstance:
     - target: {fileID: 4145628891617456813, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: 30dda071a4bd135e092679f66e6cb10e, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 4145628891617456813, guid: cb0f929d5aa450fdc8e464d385c1aa30, type: 3}
       propertyPath: m_BehaviorName
       value: MultirotorAgent
